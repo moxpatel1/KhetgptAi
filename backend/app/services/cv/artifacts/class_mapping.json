@@ -1,0 +1,240 @@
+[
+  {
+    "class_id": 0,
+    "raw_name": "Apple_Scab_Leaf",
+    "crop": "Apple",
+    "disease": "Scab Leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 1,
+    "raw_name": "Apple_leaf",
+    "crop": "Apple",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 2,
+    "raw_name": "Apple_rust_leaf",
+    "crop": "Apple",
+    "disease": "rust leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 3,
+    "raw_name": "Bacterial_leaf_blight",
+    "crop": "Bacterial",
+    "disease": "leaf blight",
+    "is_healthy": false
+  },
+  {
+    "class_id": 4,
+    "raw_name": "Bell_pepper_leaf",
+    "crop": "Bell",
+    "disease": "pepper leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 5,
+    "raw_name": "Bell_pepper_leaf_spot",
+    "crop": "Bell",
+    "disease": "pepper leaf spot",
+    "is_healthy": false
+  },
+  {
+    "class_id": 6,
+    "raw_name": "Blueberry_leaf",
+    "crop": "Blueberry",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 7,
+    "raw_name": "Brown_spot",
+    "crop": "Brown",
+    "disease": "spot",
+    "is_healthy": false
+  },
+  {
+    "class_id": 8,
+    "raw_name": "Cassava___cbb",
+    "crop": "Cassava",
+    "disease": "cbb",
+    "is_healthy": false
+  },
+  {
+    "class_id": 9,
+    "raw_name": "Cassava___cbsd",
+    "crop": "Cassava",
+    "disease": "cbsd",
+    "is_healthy": false
+  },
+  {
+    "class_id": 10,
+    "raw_name": "Cherry_leaf",
+    "crop": "Cherry",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 11,
+    "raw_name": "Corn_Gray_leaf_spot",
+    "crop": "Corn",
+    "disease": "Gray leaf spot",
+    "is_healthy": false
+  },
+  {
+    "class_id": 12,
+    "raw_name": "Corn_leaf_blight",
+    "crop": "Corn",
+    "disease": "leaf blight",
+    "is_healthy": false
+  },
+  {
+    "class_id": 13,
+    "raw_name": "Corn_rust_leaf",
+    "crop": "Corn",
+    "disease": "rust leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 14,
+    "raw_name": "Leaf_smut",
+    "crop": "Leaf",
+    "disease": "smut",
+    "is_healthy": false
+  },
+  {
+    "class_id": 15,
+    "raw_name": "Peach_leaf",
+    "crop": "Peach",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 16,
+    "raw_name": "PlantDoc-Dataset-master",
+    "crop": "PlantDoc-Dataset-master",
+    "disease": "unspecified",
+    "is_healthy": false
+  },
+  {
+    "class_id": 17,
+    "raw_name": "Potato_leaf_early_blight",
+    "crop": "Potato",
+    "disease": "leaf early blight",
+    "is_healthy": false
+  },
+  {
+    "class_id": 18,
+    "raw_name": "Potato_leaf_late_blight",
+    "crop": "Potato",
+    "disease": "leaf late blight",
+    "is_healthy": false
+  },
+  {
+    "class_id": 19,
+    "raw_name": "Raspberry_leaf",
+    "crop": "Raspberry",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 20,
+    "raw_name": "Soyabean_leaf",
+    "crop": "Soyabean",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 21,
+    "raw_name": "Squash_Powdery_mildew_leaf",
+    "crop": "Squash",
+    "disease": "Powdery mildew leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 22,
+    "raw_name": "Strawberry_leaf",
+    "crop": "Strawberry",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 23,
+    "raw_name": "Tomato_Early_blight_leaf",
+    "crop": "Tomato",
+    "disease": "Early blight leaf",
+    "is_healthy": false
+  },
+  {
+    "class_id": 24,
+    "raw_name": "Tomato_Septoria_leaf_spot",
+    "crop": "Tomato",
+    "disease": "Septoria leaf spot",
+    "is_healthy": false
+  },
+  {
+    "class_id": 25,
+    "raw_name": "Tomato_leaf",
+    "crop": "Tomato",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 26,
+    "raw_name": "Tomato_leaf_bacterial_spot",
+    "crop": "Tomato",
+    "disease": "leaf bacterial spot",
+    "is_healthy": false
+  },
+  {
+    "class_id": 27,
+    "raw_name": "Tomato_leaf_late_blight",
+    "crop": "Tomato",
+    "disease": "leaf late blight",
+    "is_healthy": false
+  },
+  {
+    "class_id": 28,
+    "raw_name": "Tomato_leaf_mosaic_virus",
+    "crop": "Tomato",
+    "disease": "leaf mosaic virus",
+    "is_healthy": true
+  },
+  {
+    "class_id": 29,
+    "raw_name": "Tomato_leaf_yellow_virus",
+    "crop": "Tomato",
+    "disease": "leaf yellow virus",
+    "is_healthy": true
+  },
+  {
+    "class_id": 30,
+    "raw_name": "Tomato_mold_leaf",
+    "crop": "Tomato",
+    "disease": "mold leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 31,
+    "raw_name": "Tomato_two_spotted_spider_mites_leaf",
+    "crop": "Tomato",
+    "disease": "two spotted spider mites leaf",
+    "is_healthy": false
+  },
+  {
+    "class_id": 32,
+    "raw_name": "grape_leaf",
+    "crop": "grape",
+    "disease": "leaf",
+    "is_healthy": true
+  },
+  {
+    "class_id": 33,
+    "raw_name": "grape_leaf_black_rot",
+    "crop": "grape",
+    "disease": "leaf black rot",
+    "is_healthy": true
+  }
+]

@@ -1,0 +1,100 @@
+[
+  {
+    "id": "Q1_PMKISAN_GU",
+    "question": "પીએમ કિસાન યોજના અંતર્ગત ખેડૂતોને કેટલી સહાય મળે છે?",
+    "language": "gu",
+    "domain": "Schemes",
+    "retrieved_sources": [
+      "PMKisanSamanNidhi.pdf (p. 1)",
+      "Amendment to OG-converted.pdf (p. 1)",
+      "Amendment to OG-converted.pdf (p. 1)"
+    ],
+    "citations_count": 0,
+    "passed": true,
+    "response_sample": "આપના પ્રશ્ન અંગે ઉપલબ્ધ સત્તાવાર સરકારી દસ્તાવેજોમાં પૂરતી વિગતો મળેલ નથી. ચોક્કસ અને તાજી માહિતી માટે કિસાન કૉલ સેન્ટર ૧૮૦૦-૧૮૦-૧૫૫૧ અથવા સ્થાનિક ગ્રામસેવક/KVK નો સંપર્ક કરવો."
+  },
+  {
+    "id": "Q2_PMFBY_HI",
+    "question": "प्रधानमंत्री फसल बीमा योजना (PMFBY) में प्राकृतिक आपदा से नुकसान होने पर क्लेम कैसे मिलता है?",
+    "language": "hi",
+    "domain": "Schemes",
+    "retrieved_sources": [
+      "PMFBY_Features.pdf (p. 1)",
+      "operational_guidelines_pmfby.pdf (p. 10)",
+      "Revamped Operational Guidelines_17th August 2020.pdf (p. 10)"
+    ],
+    "citations_count": 3,
+    "passed": true,
+    "response_sample": "प्रधानमंत्री फसल बीमा योजना (PMFBY) के तहत प्राकृतिक आपदा से नुकसान होने पर क्लेम मिलने की प्रक्रिया और योजना की मुख्य विशेषताओं के बारे में उपलब्ध आधिकारिक दस्तावेजों के आधार पर जानकारी नीचे दी गई है"
+  },
+  {
+    "id": "Q3_HORTICULTURE_EN",
+    "question": "What subsidies are provided by the Gujarat Horticulture Department for drip irrigation and net houses?",
+    "language": "en",
+    "domain": "Horticulture",
+    "retrieved_sources": [
+      "PRESS_Bhima.pdf (p. 1)",
+      "aws_gui_cre.pdf (p. 37)",
+      "Revamped Operational Guidelines_17th August 2020.pdf (p. 33)"
+    ],
+    "citations_count": 0,
+    "passed": true,
+    "response_sample": "I do not have sufficient official documentation in the current knowledge base to fully establish this answer. Please verify with Kisan Call Centre (1800-180-1551) or your local Krishi Vigyan Kendra (K"
+  },
+  {
+    "id": "Q4_BIOFERTILIZER_GU",
+    "question": "જૈવિક ખાતર અને રાઈઝોબિયમ કલ્ચરનો ઉપયોગ કેવી રીતે કરવો?",
+    "language": "gu",
+    "domain": "Biofertilizers",
+    "retrieved_sources": [
+      "Krushi Kshetra vaprata kit Nashako.pdf (p. 14)",
+      "BAGAYT KHATA NI SAHAYLAXI YOJANA.pdf (p. 10)",
+      "Jiavik Khatar Book.pdf (p. 34)"
+    ],
+    "citations_count": 3,
+    "passed": true,
+    "response_sample": "આપેલ સંદર્ભ દસ્તાવેજો (Context Chunks) માં **રાઈઝોબિયમ કલ્ચર** ના ઉપયોગ અથવા તેની વિશેષ માહિતી ઉપલબ્ધ નથી. તેથી, રાઈઝોબિયમ વિશેની ચોક્કસ માહિતી આપેલા દસ્તાવેજો પરથી આપી શકાતી નથી.\n\nજોકે, **જૈવિક ખાતર "
+  },
+  {
+    "id": "Q5_PESTICIDE_SAFETY_HI",
+    "question": "कीटनाशक दवाओं का छिड़काव करते समय किसान को क्या सावधानियां रखनी चाहिए?",
+    "language": "hi",
+    "domain": "Pesticides",
+    "retrieved_sources": [
+      "Krushi Kshetra vaprata kit Nashako.pdf (p. 11)",
+      "Krushi Kshetra vaprata kit Nashako.pdf (p. 12)",
+      "Krushi Kshetra vaprata kit Nashako.pdf (p. 32)"
+    ],
+    "citations_count": 3,
+    "passed": true,
+    "response_sample": "प्रस्तुत किए गए आधिकारिक दस्तावेज़ों (Context Chunks) में कीटनाशक छिड़काव के दौरान किसानों द्वारा रखी जाने वाली **सुरक्षा सावधानियों (जैसे मास्क, दस्ताने, सही घोलन, छिड़काव का समय)** का कोई उल्लेख नही"
+  },
+  {
+    "id": "Q6_ANIMAL_HUSBANDRY_GU",
+    "question": "દૂધાળા પશુઓમાં ખરવા-મોવાસા (FMD) રોગના લક્ષણો અને અટકાવવાના ઉપાયો શું છે?",
+    "language": "gu",
+    "domain": "Animal Husbandry",
+    "retrieved_sources": [
+      "Krushi Kshetra vaprata kit Nashako.pdf (p. 24)",
+      "Krushi Kshetra vaprata kit Nashako.pdf (p. 11)",
+      "Mushroom Cultivation.pdf (p. 3)"
+    ],
+    "citations_count": 3,
+    "passed": true,
+    "response_sample": "આપેલ સંદર્ભ દસ્તાવેજો (Context Chunks) માં દૂધાળા પશુઓમાં ખરવા-મોવાસા (FMD) રોગના લક્ષણો અથવા અટકાવવાના ઉપાયો વિશે કોઈ માહિતી ઉપલબ્ધ નથી.\n\nઆપેલ દસ્તાવેજોમાં નીચે મુજબની માહિતી છે:\n*   [Source 1: Krush"
+  },
+  {
+    "id": "Q7_ABSENT_INFO_EN",
+    "question": "What is the exact subsidy for submarine farming on Mars under Indian agricultural policy?",
+    "language": "en",
+    "domain": "Negative Test",
+    "retrieved_sources": [
+      "PRESS_Bhima.pdf (p. 1)",
+      "NAIS_SCHEME.pdf (p. 16)",
+      "NAIS_SCHEME.pdf (p. 15)"
+    ],
+    "citations_count": 0,
+    "passed": true,
+    "response_sample": "I do not have sufficient official documentation in the current knowledge base to fully establish this answer. Please verify with Kisan Call Centre (1800-180-1551) or your local Krishi Vigyan Kendra (K"
+  }
+]

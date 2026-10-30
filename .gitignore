@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+.pytest_cache/
+*.log
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Environment & Secrets (NEVER COMMIT SECRETS)
+.env
+.env.local
+.env.*.local
+
+# Data storage & large cached binaries
+data/uploads/*
+!data/uploads/.gitkeep
+data/db/*
+!data/db/.gitkeep
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/splits/*
+!data/splits/.gitkeep
+data/chroma_db/*
+!data/chroma_db/.gitkeep
+
+# Large ML model weights (>50MB, preserved locally)
+*.pth
+*.pt
+*.bin
+*.onnx
+*.weights
+!backend/app/services/cv/artifacts/*.json
+!backend/app/services/cv/artifacts/*.csv
+
+# Large archives and binaries (>50MB exceeds standard GitHub limits)
+*.zip
+*.tar
+*.tar.gz
+*.rar
+Schemes/YESTECH_Manual_2023_(v.2).pdf
+ICAR BOOks/Book Methods manual (Soil Testing In India)001.pdf
+
+# Operating System
+.DS_Store
+Thumbs.db
+

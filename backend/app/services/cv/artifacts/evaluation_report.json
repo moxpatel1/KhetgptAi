@@ -1,0 +1,28 @@
+{
+  "winning_architecture": "ResNet50",
+  "evaluated_at": "2026-10-30T21:59:07Z",
+  "model_file": "plant_disease_model.pth",
+  "model_size_mb": 94.06,
+  "device": "cpu",
+  "total_classes": 34,
+  "test_samples": 456,
+  "metrics": {
+    "test_accuracy": 0.5504,
+    "macro_precision": 0.4938,
+    "macro_recall": 0.464,
+    "macro_f1": 0.452,
+    "cpu_latency_ms": 63.04
+  },
+  "all_models_compared": {
+    "EfficientNet-B0": {
+      "accuracy": 0.5022,
+      "macro_f1": 0.4387,
+      "latency_ms": 22.85
+    },
+    "ResNet50": {
+      "accuracy": 0.5504,
+      "macro_f1": 0.452,
+      "latency_ms": 63.04
+    }
+  }
+}

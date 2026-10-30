@@ -1,0 +1,73 @@
+{
+  "verified_at": "2026-10-30T21:42:29Z",
+  "total_verified_images": 2863,
+  "total_corrupt_rejected": 8,
+  "total_duplicates_filtered": 132,
+  "sources": {
+    "rice_leaf_disease": {
+      "total": 240,
+      "verified": 120,
+      "corrupt": 0,
+      "classes_count": 3,
+      "classes": [
+        "Bacterial_leaf_blight",
+        "Brown_spot",
+        "Leaf_smut"
+      ]
+    },
+    "plantvillage": {
+      "total": 0,
+      "verified": 0,
+      "corrupt": 0,
+      "classes_count": 0,
+      "classes": []
+    },
+    "plantdoc": {
+      "total": 2573,
+      "verified": 2553,
+      "corrupt": 8,
+      "classes_count": 29,
+      "classes": [
+        "Apple_Scab_Leaf",
+        "Apple_leaf",
+        "Apple_rust_leaf",
+        "Bell_pepper_leaf",
+        "Bell_pepper_leaf_spot",
+        "Blueberry_leaf",
+        "Cherry_leaf",
+        "Corn_Gray_leaf_spot",
+        "Corn_leaf_blight",
+        "Corn_rust_leaf",
+        "Peach_leaf",
+        "PlantDoc-Dataset-master",
+        "Potato_leaf_early_blight",
+        "Potato_leaf_late_blight",
+        "Raspberry_leaf",
+        "Soyabean_leaf",
+        "Squash_Powdery_mildew_leaf",
+        "Strawberry_leaf",
+        "Tomato_Early_blight_leaf",
+        "Tomato_Septoria_leaf_spot",
+        "Tomato_leaf",
+        "Tomato_leaf_bacterial_spot",
+        "Tomato_leaf_late_blight",
+        "Tomato_leaf_mosaic_virus",
+        "Tomato_leaf_yellow_virus",
+        "Tomato_mold_leaf",
+        "Tomato_two_spotted_spider_mites_leaf",
+        "grape_leaf",
+        "grape_leaf_black_rot"
+      ]
+    },
+    "cassava_leaf_disease": {
+      "total": 190,
+      "verified": 190,
+      "corrupt": 0,
+      "classes_count": 2,
+      "classes": [
+        "Cassava___cbb",
+        "Cassava___cbsd"
+      ]
+    }
+  }
+}
