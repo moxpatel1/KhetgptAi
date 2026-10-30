@@ -8,7 +8,6 @@ import os
 import logging
 from typing import List, Dict, Any, Optional
 import chromadb
-from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger("khetgpt.rag.embeddings")
 
@@ -28,7 +27,8 @@ class VectorStore:
             metadata={"description": "KhetGPT Multilingual Agricultural Knowledge Base"}
         )
         logger.info(f"Initialized ChromaDB at {persist_dir}, collection: {COLLECTION_NAME} (Count: {self.collection.count()})")
-        self._model: Optional[SentenceTransformer] = None
+        self._fast_model = None
+        self._model = None
 
     @classmethod
     def get_instance(cls) -> "VectorStore":
@@ -37,17 +37,44 @@ class VectorStore:
         return cls._instance
 
     @property
-    def model(self) -> SentenceTransformer:
+    def fast_model(self):
+        if self._fast_model is None:
+            try:
+                from fastembed import TextEmbedding
+                self._fast_model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5", threads=1)
+                logger.info("FastEmbed ONNX model BAAI/bge-small-en-v1.5 initialized (threads=1).")
+            except Exception as e:
+                logger.warning(f"FastEmbed unavailable ({e}), using SentenceTransformer fallback.")
+        return self._fast_model
+
+    @property
+    def model(self):
         if self._model is None:
-            logger.info("Loading embedding model BAAI/bge-small-en-v1.5...")
+            logger.info("Loading embedding model BAAI/bge-small-en-v1.5 fallback...")
+            from sentence_transformers import SentenceTransformer
             self._model = SentenceTransformer("BAAI/bge-small-en-v1.5")
-            logger.info("Embedding model loaded.")
+            logger.info("Embedding fallback model loaded.")
         return self._model
 
     def embed_texts(self, texts: List[str]) -> List[List[float]]:
         if not texts:
             return []
-        embeddings = self.model.encode(texts, normalize_embeddings=True, show_progress_bar=False)
+        clamped_texts = [t[:500] for t in texts]
+        try:
+            if self.fast_model is not None:
+                return [emb.tolist() for emb in self.fast_model.embed(clamped_texts, batch_size=8)]
+        except Exception as e:
+            logger.warning(f"FastEmbed inference error: {e}, resetting ONNX session.")
+            import gc
+            self._fast_model = None
+            gc.collect()
+            try:
+                from fastembed import TextEmbedding
+                self._fast_model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5", threads=1)
+                return [emb.tolist() for emb in self._fast_model.embed(clamped_texts, batch_size=4)]
+            except Exception as e2:
+                logger.warning(f"Reset failed: {e2}, using SentenceTransformer fallback.")
+        embeddings = self.model.encode(clamped_texts, normalize_embeddings=True, show_progress_bar=False)
         return embeddings.tolist()
 
     def add_chunks(self, chunks: List[Dict[str, Any]], batch_size: int = 64):

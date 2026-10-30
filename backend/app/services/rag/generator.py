@@ -30,7 +30,7 @@ INSUFFICIENT_EVIDENCE_MESSAGES = {
 }
 
 # Relevance similarity threshold to guard against hallucination on off-topic questions
-RELEVANCE_THRESHOLD = 0.45
+RELEVANCE_THRESHOLD = 0.32
 
 def build_system_prompt(language: str) -> str:
     lang = language.lower()
@@ -125,14 +125,33 @@ class RAGAnswerGenerator:
         context_text = "\n\n".join(context_parts)
         system_prompt = build_system_prompt(lang)
 
-        user_content = f"""Official Agricultural Context Chunks:
+        if lang == "gu":
+            user_content = f"""સત્તાવાર સરકારી કૃષિ દસ્તાવેજો (Official Context):
+------------------------------------
+{context_text}
+------------------------------------
+
+ખેડૂતનો પ્રશ્ન: {question}
+
+સૂચના: ઉપર આપેલા સત્તાવાર સંદર્ભ દસ્તાવેજોના આધારે ખેડૂતના આ પ્રશ્નનો સ્પષ્ટ, વ્યવહારુ અને મુદ્દાસર શુદ્ધ ગુજરાતીમાં સંપૂર્ણ ઉત્તર આપો. જ્યાં પણ માહિતી લીધી હોય ત્યાં સંદર્ભ ટાંકો (દા.ત. [Source 1, Page ...])."""
+        elif lang == "hi":
+            user_content = f"""आधिकारिक सरकारी कृषि दस्तावेज़ (Official Context):
+------------------------------------
+{context_text}
+------------------------------------
+
+किसान का प्रश्न: {question}
+
+निर्देश: ऊपर दिए गए आधिकारिक संदर्भ दस्तावेजों के आधार पर किसान के इस प्रश्न का स्पष्ट, व्यावहारिक और बिंदुवार हिन्दी में उत्तर दें। जहां भी जानकारी ली गई हो वहां संदर्भ अवश्य उद्धृत करें (उदा. [Source 1, Page ...])."""
+        else:
+            user_content = f"""Official Agricultural Context Chunks:
 ------------------------------------
 {context_text}
 ------------------------------------
 
 Farmer Question: {question}
 
-Please answer the farmer's question directly based on the official evidence above, citing sources where appropriate."""
+Please answer the farmer's question directly, clearly, and practically based on the official evidence above, citing sources where appropriate (e.g. [Source 1, Page ...])."""
 
         messages = [{"role": "system", "content": system_prompt}]
         if conversation_history:
