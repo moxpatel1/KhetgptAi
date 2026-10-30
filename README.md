@@ -50,23 +50,25 @@ The platform focuses on three primary farmer-centric capabilities:
                                             ▼
                     ┌───────────────────────────────────────────────┐
                     │               FastAPI Backend (Python 3.13)   │
-                    │  CORS • Pydantic V2 • Health Check • Security  │
+                    │  CORS • Pydantic V2 • Health Check • Security │
                     └───────┬───────────────────────┬───────────────┘
                             │                       │
          ┌──────────────────┴────────┐   ┌──────────┴─────────────────┐
          ▼                           ▼   ▼                            ▼
 ┌──────────────────┐  ┌────────────────┐ ┌────────────────┐ ┌──────────────────┐
 │  PyTorch Vision  │  │  ChromaDB RAG  │ │  Groq LLM API  │ │   SQLite / DB    │
-│  EfficientNet-B0 │  │  2,500+ Chunks │ │ Qwen 3.8 27B / │ │  Conversations   │
-│ 38 Class Engine  │  │   BGE Embed    │ │ GPT-OSS 120B   │ │  Scan History    │
+│  ResNet50 /      │  │  5,990+ Chunks │ │ Llama-3.3-70B/ │ │  Conversations   │
+│  EfficientNet-B0 │  │  FastEmbed ONNX│ │ Qwen 27B OSS   │ │  Scan History    │
+│ 34 Class Engine  │  │  6 Agri Domains│ │ Grounded Cit.  │ │                  │
 └──────────────────┘  └────────────────┘ └────────────────┘ └──────────────────┘
 ```
 
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons.
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons, ReactMarkdown, RemarkGFM.
 - **Backend API**: Python 3.13, FastAPI, Uvicorn, Pydantic V2, Pydantic Settings.
-- **Computer Vision**: PyTorch 2.13, TorchVision, Pillow, Scikit-Learn.
-- **Vector Search & Ingestion**: ChromaDB, BAAI/bge-small-en-v1.5, PyPDF, Pytesseract OCR.
-- **Language Model**: Groq Cloud API (`qwen/qwen3.8-27b` / `openai/gpt-oss-120b`).
+- **Computer Vision**: PyTorch, TorchVision, ResNet50 (primary), EfficientNet-B0, Scikit-Learn.
+- **Vector Search & Ingestion**: ChromaDB, BAAI/bge-small-en-v1.5 (quantized ONNX FastEmbed with auto-reset), PyPDF.
+- **Knowledge Base**: 5,990 chunks covering 6 domains (Schemes, Pashu palan, Khetivadi, Bagayat, ICAR Books, Director of homiculture).
+- **Language Model**: Groq Cloud API (`llama-3.3-70b-versatile` / `openai/gpt-oss-20b`).
 - **Database**: SQLite (local development) / PostgreSQL (production Render).
 
 ---
@@ -134,6 +136,9 @@ Frontend will be accessible at: `http://localhost:5173`
 ```bash
 # Run complete test suite (API, Computer Vision, RAG, Strict Language)
 python -m pytest --assert=plain tests/test_api.py tests/test_cv.py tests/test_rag.py tests/test_language.py -v
+
+# Run multi-folder RAG knowledge base verification (All 6 PDF directories)
+python -m scripts.verify_all_6_folders_rag
 
 # Run End-to-End RAG evaluation
 python -m pytest --assert=plain tests/test_e2e.py -v
