@@ -201,8 +201,14 @@ class CropDiseaseClassifier:
         is_healthy = best_info.get("is_healthy", False)
 
         # 4. Uncertainty & Out-of-Distribution Calibration
-        # Out-of-distribution, blur, or unsupported foliage:
-        is_uncertain = (crop_confidence < 0.60) or (best_prob < 0.50)
+        # Check spatial variance across pixel dimensions (detect solid color, blank screens, artificial inputs)
+        import numpy as np
+        img_arr = np.array(pil_image)
+        spatial_stds = np.std(img_arr, axis=(0, 1)) if img_arr.ndim >= 3 else [np.std(img_arr)]
+        is_uniform_non_plant = bool(np.max(spatial_stds) < 12.0)
+
+        # Out-of-distribution, blur, uniform color, or unsupported foliage:
+        is_uncertain = is_uniform_non_plant or (crop_confidence < 0.50) or (best_prob < 0.40)
 
         top_alternatives = []
         for i in range(len(top_indices)):
