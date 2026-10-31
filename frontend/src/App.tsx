@@ -27,16 +27,18 @@ export const App: React.FC = () => {
 
   const t = translations[language];
 
-  return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-green-100 selection:text-green-900">
-      {/* Automatic Fullscreen 3D Agriculture Seed-to-Plant Intro Animation */}
-      {showIntro && (
-        <PlantGrowingIntro
-          onComplete={handleIntroComplete}
-          language={language}
-        />
-      )}
+  // When opening or refreshing the website, show ONLY the 3D animation (Navbar & main content NOT shown)
+  if (showIntro) {
+    return (
+      <PlantGrowingIntro
+        onComplete={handleIntroComplete}
+        language={language}
+      />
+    );
+  }
 
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-green-100 selection:text-green-900 animate-fadeIn">
       {/* Sticky Top Navigation */}
       <Navbar
         currentTab={currentTab}
