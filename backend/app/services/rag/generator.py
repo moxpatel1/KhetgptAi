@@ -13,6 +13,8 @@ from typing import List, Dict, Any, Optional
 from groq import Groq
 
 from backend.app.core.config import settings
+from backend.app.services.llm.manager import LLMManager
+from backend.app.services.rag.formatter import sanitize_and_format_markdown
 
 logger = logging.getLogger("khetgpt.rag.generator")
 
@@ -30,7 +32,7 @@ INSUFFICIENT_EVIDENCE_MESSAGES = {
 }
 
 # Relevance similarity threshold to guard against hallucination on off-topic questions
-RELEVANCE_THRESHOLD = 0.32
+RELEVANCE_THRESHOLD = 0.40
 
 def build_system_prompt(language: str) -> str:
     lang = language.lower()
@@ -65,18 +67,7 @@ Core Instructions:
 
 class RAGAnswerGenerator:
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or settings.GROQ_API_KEY
-        self.client: Optional[Groq] = None
-        if self.api_key:
-            try:
-                self.client = Groq(api_key=self.api_key, timeout=15.0)
-            except Exception as e:
-                logger.error(f"Failed to initialize Groq client: {e}")
-        self.preferred_models = [
-            settings.GROQ_MODEL,
-            "qwen/qwen3.8-27b",
-            "openai/gpt-oss-20b"
-        ]
+        self.llm_manager = LLMManager.get_instance()
 
     def generate_answer(
         self,
@@ -155,32 +146,21 @@ Farmer Question: {question}
 
 Please answer the farmer's question directly, clearly, and practically based on the official evidence above, citing sources where appropriate (e.g. [Source 1, Page ...])."""
 
-        messages = [{"role": "system", "content": system_prompt}]
+        messages = []
         if conversation_history:
             for msg in conversation_history[-4:]:
                 messages.append({"role": msg["role"], "content": msg["content"]})
         messages.append({"role": "user", "content": user_content})
 
-        answer_text = None
-        used_model = None
+        # Multi-provider generation: Gemini (if configured) -> Groq -> fallback
+        raw_ans, provider_used, model_used = self.llm_manager.generate(
+            messages=messages,
+            system_prompt=system_prompt,
+            max_tokens=500,
+            temperature=0.2
+        )
 
-        if self.client:
-            for model_name in self.preferred_models:
-                try:
-                    completion = self.client.chat.completions.create(
-                        model=model_name,
-                        messages=messages,
-                        temperature=0.2,
-                        max_tokens=450,
-                    )
-                    if completion.choices and completion.choices[0].message.content:
-                        raw_ans = completion.choices[0].message.content.strip()
-                        if len(raw_ans) > 20:
-                            answer_text = raw_ans
-                            used_model = model_name
-                            break
-                except Exception as e:
-                    logger.warning(f"Groq generation failed on {model_name}: {e}")
+        answer_text = raw_ans
 
         if not answer_text:
             top_doc = retrieved_chunks[0]
@@ -191,16 +171,20 @@ Please answer the farmer's question directly, clearly, and practically based on 
             else:
                 answer_text = f"According to official publication **{top_doc.get('document_name')}** (Page {top_doc.get('page_number')}):\n\n{top_doc.get('text')[:400]}..."
 
+        # Format and sanitize Markdown
+        answer_text = sanitize_and_format_markdown(answer_text, language=lang)
+
         # Attach disclaimer
         disclaimer = OFFICIAL_DISCLAIMERS.get(lang, OFFICIAL_DISCLAIMERS["en"])
         if disclaimer.strip() not in answer_text:
-            answer_text += disclaimer
+            answer_text += "\n\n" + disclaimer
 
         return {
             "answer": answer_text,
             "citations": citations,
             "language": lang,
-            "model_used": used_model,
+            "provider_used": provider_used,
+            "model_used": model_used,
             "evidence_found": True,
             "confidence": "High" if len(retrieved_chunks) >= 3 else "Moderate"
         }

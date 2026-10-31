@@ -208,7 +208,8 @@ class CropDiseaseClassifier:
         is_uniform_non_plant = bool(np.max(spatial_stds) < 12.0)
 
         # Out-of-distribution, blur, uniform color, or unsupported foliage:
-        is_uncertain = is_uniform_non_plant or (crop_confidence < 0.50) or (best_prob < 0.40)
+        # Calibrated threshold: if crop confidence < 0.65 or best prob < 0.60, flag as uncertain
+        is_uncertain = is_uniform_non_plant or (crop_confidence < 0.65) or (best_prob < 0.60)
 
         top_alternatives = []
         for i in range(len(top_indices)):
@@ -225,11 +226,23 @@ class CropDiseaseClassifier:
         uncertainty_msg = None
         if is_uncertain:
             if language == "gu":
-                uncertainty_msg = "ફોટો પૂરતો સ્પષ્ટ નથી અથવા માન્ય કૃષિ પાક ઓળખાઈ શક્યો નથી (વિશ્વાસ સ્તર ૬૦% થી ઓછો છે). ચોક્કસ નિદાન માટે દિવસના અજવાળામાં પાંદડાનો નજીકથી અને સ્પષ્ટ ફોટો અપલોડ કરો."
+                uncertainty_msg = (
+                    "આ પાંદડાનો ફોટો અમારા ૧૪ માન્ય વિઝ્યુઅલ પાકો (ટામેટા, બટાટા, મકાઈ, મરચાં વગેરે) સાથે મેળ ખાતો નથી અથવા વિશ્વાસ સ્તર ૬૫% થી ઓછો છે. "
+                    "જો આ ગુવાર (Guar / Cluster Bean), ચોળી (Cowpea / Lobia), કપાસ, કે ઘઉંનો પાક હોય, તો તે વિઝ્યુઅલ મોડેલમાં સમાવિષ્ટ નથી. "
+                    "ચોક્કસ માર્ગદર્શન માટે કૃપા કરીને KhetGPT AI Chat માં પાકના લક્ષણો જણાવી સત્તાવાર સરકારી દસ્તાવેજોમાંથી સલાહ મેળવો."
+                )
             elif language == "hi":
-                uncertainty_msg = "तस्वीर में किसी मान्य कृषि फसल के लक्षण स्पष्ट नहीं हैं (विश्वास स्तर 60% से कम है)। सटीक निदान के लिए दिन के उजाले में पत्ती की नजदीકી और साफ तस्वीर लें।"
+                uncertainty_msg = (
+                    "यह पत्ती हमारे 14 प्रशिक्षित फसलों (टमाटर, आलू, मक्का, मिर्च आदि) से मेल नहीं खाती या विश्वास स्तर 65% से कम है। "
+                    "यदि यह ग्वार (Guar), लोबिया (Cowpea), कपास, या गेहूं है, तो यह विजुअल मॉडल में शामिल नहीं है। "
+                    "सटीक मार्गदर्शन के लिए कृपया KhetGPT AI Chat में लक्षण पूछें।"
+                )
             else:
-                uncertainty_msg = "The model has high uncertainty (< 60% confidence). The photo may be blurry, poorly lit, or not a supported crop leaf. Please upload a clear close-up leaf photo in daylight."
+                uncertainty_msg = (
+                    "This leaf photo does not match our 14 trained visual scan crops (Apple, Bell Pepper, Blueberry, Cassava, Cherry, Corn, Grape, Peach, Potato, Raspberry, Soybean, Squash, Strawberry, Tomato) or has low confidence (< 65%). "
+                    "If this is Guar (Cluster Bean), Cowpea (Lobia), Cotton, or Wheat, it is outside the visual scan classes. "
+                    "Please ask KhetGPT AI Chat with your symptoms to retrieve verified advice from official agricultural documents."
+                )
 
         # 5. Fetch localized treatment advisory (preserving detected crop)
         treatment = get_disease_treatment(
@@ -239,16 +252,29 @@ class CropDiseaseClassifier:
             language=language
         )
 
+        crop_display = treatment["crop_name"]
+        disease_display = treatment["disease_name"]
+        if is_uncertain and best_prob < 0.55:
+            if language == "gu":
+                crop_display = "અસમર્થિત પાક (દા.ત. ગુવાર/ચોળી)"
+                disease_display = "લક્ષણ આધારિત KhetGPT Chat નો ઉપયોગ કરો"
+            elif language == "hi":
+                crop_display = "असमर्थित फसल (उदा. ग्वार/लोबिया)"
+                disease_display = "लक्षण आधारित KhetGPT Chat का उपयोग करें"
+            else:
+                crop_display = "Unsupported Crop (e.g. Guar/Cowpea)"
+                disease_display = "Consult KhetGPT Chat for symptoms"
+
         # Calculate final presentation confidence
-        display_confidence = max(best_prob, crop_confidence * 0.95)
+        display_confidence = max(best_prob, crop_confidence * 0.95) if not is_uncertain else min(best_prob, 0.45)
 
         return {
             "success": True,
             "raw_class": raw_name,
-            "crop": treatment["crop_name"],
-            "crop_en": detected_crop,
+            "crop": crop_display,
+            "crop_en": detected_crop if not (is_uncertain and best_prob < 0.55) else "Unsupported Crop",
             "crop_confidence": float(round(crop_confidence, 4)),
-            "disease": treatment["disease_name"],
+            "disease": disease_display,
             "disease_confidence": float(round(best_prob, 4)),
             "is_healthy": is_healthy,
             "confidence": float(round(display_confidence, 4)),

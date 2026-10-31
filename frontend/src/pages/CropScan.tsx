@@ -176,6 +176,31 @@ export const CropScan: React.FC<CropScanProps> = ({ language }) => {
         </p>
       </div>
 
+      {/* Supported Crops & Out-of-Distribution Info Banner */}
+      <div className="bg-emerald-50/70 rounded-2xl p-4 border border-emerald-200 text-xs text-emerald-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+        <div>
+          <span className="font-bold flex items-center mb-1">
+            <CheckCircle className="w-4 h-4 text-emerald-600 mr-1.5" />
+            {language === 'gu' ? '૧૪ માન્ય વિઝ્યુઅલ પાકો:' : language === 'hi' ? '14 मान्य विजुअल फसलें:' : '14 Supported Leaf Scan Crops:'}
+          </span>
+          <p className="text-emerald-800">
+            {language === 'gu'
+              ? 'ટામેટા, બટાટા, મકાઈ, કેપ્સીકમ/મરચાં, દ્રાક્ષ, સફરજન, સોયાબીન, કોળું, સ્ટ્રોબેરી, કાસાવા, ચેરી, બ્લૂબેરી, પીચ, રાસ્પબેરી.'
+              : language === 'hi'
+              ? 'टमाटर, आलू, मक्का, शिमला मिर्च/मिर्च, अंगूर, सेब, सोयाबीन, कद्दू, स्ट्रॉबेरी, कसावा, चेरी, ब्लूबेरी, आड़ू, रसभरी।'
+              : 'Tomato, Potato, Corn/Maize, Bell Pepper/Chilli, Grape, Apple, Soybean, Squash, Strawberry, Cassava, Cherry, Blueberry, Peach, Raspberry.'}
+          </p>
+        </div>
+        <div className="text-xs bg-white px-3 py-2 rounded-xl border border-emerald-200 text-gray-700 flex-shrink-0">
+          <span className="font-semibold text-emerald-800">
+            {language === 'gu' ? 'ગુવાર, ચોળી, કપાસ કે ઘઉં?' : language === 'hi' ? 'ग्वार, लोबिया, कपास या गेहूं?' : 'Guar, Cowpea, Cotton, Wheat?'}
+          </span>
+          <p className="text-[11px] text-gray-600">
+            {language === 'gu' ? 'KhetGPT Chat માં લક્ષણો પૂછો' : language === 'hi' ? 'KhetGPT Chat में लक्षण पूछें' : 'Consult KhetGPT AI Chat'}
+          </p>
+        </div>
+      </div>
+
       {/* Preset Quick Samples (Testing helper with real leaf photographs) */}
       <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
         <span className="font-semibold text-gray-700 flex items-center">
@@ -359,14 +384,23 @@ export const CropScan: React.FC<CropScanProps> = ({ language }) => {
 
             {/* Uncertainty Warning Alert if applicable */}
             {result.is_uncertain && (
-              <div className="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start space-x-3 text-xs sm:text-sm">
-                <ShieldAlert className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <div className="font-bold">{t.scanUncertaintyAlert}</div>
-                  {result.uncertainty_explanation && (
-                    <p className="mt-1 text-amber-800">{result.uncertainty_explanation}</p>
-                  )}
+              <div className="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs sm:text-sm">
+                <div className="flex items-start space-x-3">
+                  <ShieldAlert className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <div className="font-bold">{t.scanUncertaintyAlert}</div>
+                    {result.uncertainty_explanation && (
+                      <p className="mt-1 text-amber-800 leading-relaxed">{result.uncertainty_explanation}</p>
+                    )}
+                  </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => window.location.href = '#chat'}
+                  className="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs flex-shrink-0 shadow-sm transition-colors"
+                >
+                  {language === 'gu' ? 'KhetGPT Chat પૂછો' : language === 'hi' ? 'KhetGPT Chat से पूछें' : 'Ask KhetGPT Chat'}
+                </button>
               </div>
             )}
 

@@ -104,7 +104,9 @@ def handle_chat_message(
         language=request.language,
         citations=gen_result["citations"],
         confidence=gen_result.get("confidence", "High"),
-        evidence_found=gen_result.get("evidence_found", True)
+        evidence_found=gen_result.get("evidence_found", True),
+        provider=gen_result.get("provider_used"),
+        model=gen_result.get("model_used")
     )
 
 @router.get("/conversations", response_model=List[ConversationSummary])

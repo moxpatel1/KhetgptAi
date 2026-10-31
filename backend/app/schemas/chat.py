@@ -27,6 +27,8 @@ class ChatMessageResponse(BaseModel):
     citations: List[Citation] = []
     confidence: str = "High"
     evidence_found: bool = True
+    provider: Optional[str] = None
+    model: Optional[str] = None
 
 class ConversationSummary(BaseModel):
     id: str
