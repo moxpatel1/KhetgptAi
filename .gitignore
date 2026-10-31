@@ -13,7 +13,7 @@ venv/
 # Node & Frontend
 node_modules/
 frontend/node_modules/
-frontend/dist/
+# frontend/dist/ (pre-built production assets tracked for single-service deployment)
 frontend/.vite/
 
 # Environment & Secrets (NEVER COMMIT SECRETS)

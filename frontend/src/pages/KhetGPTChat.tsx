@@ -36,7 +36,7 @@ interface ConversationItem {
   message_count: number;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.origin.includes('localhost') ? 'http://localhost:8000' : '');
 
 export const KhetGPTChat: React.FC<KhetGPTChatProps> = ({ language }) => {
   const t = translations[language];

@@ -2,6 +2,8 @@
 Crop Disease Scan API Router
 """
 
+import json
+import os
 import logging
 from typing import List, Optional
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, Query
@@ -9,7 +11,6 @@ from sqlalchemy.orm import Session
 
 from backend.app.core.database import get_db
 from backend.app.models.db_models import DiseaseScan
-from backend.app.services.cv.classifier import CropDiseaseClassifier
 from backend.app.schemas.disease import DiseaseScanResponse
 
 logger = logging.getLogger("khetgpt.api.disease")
@@ -42,6 +43,7 @@ async def predict_crop_disease(
             detail="File size exceeds 15MB limit. Please upload a compressed leaf photograph."
         )
 
+    from backend.app.services.cv.classifier import CropDiseaseClassifier
     classifier = CropDiseaseClassifier.get_instance()
     result = classifier.predict_image(image_bytes=image_bytes, language=language)
 
@@ -73,7 +75,19 @@ async def predict_crop_disease(
 
 @router.get("/classes")
 def list_supported_classes():
-    """Returns all 38 supported crop & disease classes."""
+    """Returns all 38 supported crop & disease classes without loading PyTorch."""
+    mapping_path = os.path.join(os.path.dirname(__file__), "..", "services", "cv", "artifacts", "class_mapping.json")
+    if os.path.exists(mapping_path):
+        try:
+            with open(mapping_path, "r", encoding="utf-8") as f:
+                classes = json.load(f)
+            return {
+                "total_classes": len(classes),
+                "classes": classes
+            }
+        except Exception as e:
+            logger.warning(f"Failed to read class mapping json: {e}")
+    from backend.app.services.cv.classifier import CropDiseaseClassifier
     classifier = CropDiseaseClassifier.get_instance()
     return {
         "total_classes": len(classifier.classes),

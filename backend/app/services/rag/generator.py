@@ -74,6 +74,7 @@ class RAGAnswerGenerator:
                 logger.error(f"Failed to initialize Groq client: {e}")
         self.preferred_models = [
             settings.GROQ_MODEL,
+            "qwen/qwen3.8-27b",
             "openai/gpt-oss-20b"
         ]
 
@@ -120,7 +121,8 @@ class RAGAnswerGenerator:
                 "category": chunk.get("category", "Agriculture"),
                 "similarity": sim
             })
-            context_parts.append(f"[Source {idx+1}: {doc_name}, Page {page_num}]\n{chunk['text']}")
+            chunk_snippet = chunk['text'][:800].strip()
+            context_parts.append(f"[Source {idx+1}: {doc_name}, Page {page_num}]\n{chunk_snippet}")
 
         context_text = "\n\n".join(context_parts)
         system_prompt = build_system_prompt(lang)
@@ -169,7 +171,7 @@ Please answer the farmer's question directly, clearly, and practically based on 
                         model=model_name,
                         messages=messages,
                         temperature=0.2,
-                        max_tokens=900,
+                        max_tokens=450,
                     )
                     if completion.choices and completion.choices[0].message.content:
                         raw_ans = completion.choices[0].message.content.strip()

@@ -42,7 +42,7 @@ interface ScanResult {
   error?: string;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.origin.includes('localhost') ? 'http://localhost:8000' : '');
 
 export const CropScan: React.FC<CropScanProps> = ({ language }) => {
   const t = translations[language];
