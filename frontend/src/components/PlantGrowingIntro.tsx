@@ -24,12 +24,6 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
   }, [onComplete]);
 
   useEffect(() => {
-    // Accessibility check: Skip immediately if user prefers reduced motion
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      onComplete();
-      return;
-    }
-
     const container = mountRef.current;
     if (!container) return;
 
@@ -38,7 +32,7 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
       if (!isFinishedRef.current) {
         handleFinish();
       }
-    }, 6200);
+    }, 6500);
 
     // Verify WebGL availability
     let glAvailable = false;
@@ -56,16 +50,16 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
       return;
     }
 
-    // ---------------- THREE.JS CINEMATIC 3D SCENE ----------------
+    // ---------------- THREE.JS 3D CINEMATIC SCENE SETUP ----------------
     let width = container.clientWidth || window.innerWidth;
     let height = container.clientHeight || window.innerHeight;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0705); // Rich deep dark agricultural loam background
+    // Warm morning sky background
+    scene.background = new THREE.Color(0x0a1612);
 
-    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 50);
-    // Position camera focused slightly low near soil level initially
-    camera.position.set(0, 0.12, 2.5);
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
+    camera.position.set(0, 0.18, 2.5);
 
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -77,76 +71,80 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.25;
     container.appendChild(renderer.domElement);
 
-    // ---------------- LIGHTING (SCENE 1: SOFT DAWN TO GOLDEN SUN) ----------------
-    // 1. Soft atmospheric dawn ambient light
-    const ambientLight = new THREE.AmbientLight(0xfef3c7, 0.55);
+    // ---------------- LIGHTING (VIBRANT & WARM MORNING SUN) ----------------
+    // 1. Warm dawn ambient light
+    const ambientLight = new THREE.AmbientLight(0xfff7ed, 0.85);
     scene.add(ambientLight);
 
-    // 2. Rising Golden Sunlight (Directional beam illuminating sprout & leaves)
-    const sunLight = new THREE.DirectionalLight(0xffedd5, 0.25);
-    sunLight.position.set(3.2, 5.5, 2.8);
+    // 2. Rising Golden Sunlight (Directional beam casting crisp shadows)
+    const sunLight = new THREE.DirectionalLight(0xffedd5, 2.2);
+    sunLight.position.set(3.5, 5.2, 3.0);
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 1024;
     sunLight.shadow.mapSize.height = 1024;
     scene.add(sunLight);
 
-    // 3. Gentle Backlight for translucent green leaf radiance
-    const leafBackGlow = new THREE.PointLight(0x86efac, 0.1, 4);
-    leafBackGlow.position.set(0, 0.7, -0.5);
-    scene.add(leafBackGlow);
+    // 3. Sky-blue fill light for realistic 3D depth in shadows
+    const fillLight = new THREE.DirectionalLight(0xa7f3d0, 0.65);
+    fillLight.position.set(-3.0, 2.5, 2.0);
+    scene.add(fillLight);
 
-    // ---------------- SCENE 1: FERTILE SOIL & UNDERGROUND CROSS-SECTION ----------------
-    // Top Soil Surface Plane (y = 0.0)
-    const soilTopGeo = new THREE.PlaneGeometry(9, 6.5, 28, 28);
+    // 4. Backlight for translucent green leaf glow
+    const leafGlow = new THREE.PointLight(0x86efac, 1.4, 5);
+    leafGlow.position.set(0, 0.7, -0.4);
+    scene.add(leafGlow);
+
+    // ---------------- SCENE 1: FERTILE SOIL & UNDERGROUND STRATA ----------------
+    // Top Soil Surface Plane with organic furrows (y = 0.0)
+    const soilTopGeo = new THREE.PlaneGeometry(9, 6.5, 32, 32);
     const topPos = soilTopGeo.attributes.position;
     for (let i = 0; i < topPos.count; i++) {
       const x = topPos.getX(i);
       const y = topPos.getY(i);
-      // Realistic earthy furrow undulations and organic irregularities
-      topPos.setZ(i, Math.sin(x * 3.8) * 0.045 + Math.cos(y * 3.2) * 0.035 + (Math.random() - 0.5) * 0.012);
+      topPos.setZ(i, Math.sin(x * 3.5) * 0.045 + Math.cos(y * 3.0) * 0.035);
     }
     soilTopGeo.computeVertexNormals();
 
     const soilTopMat = new THREE.MeshStandardMaterial({
-      color: 0x26170d, // Dark rich humus agricultural soil
-      roughness: 0.96,
-      metalness: 0.01,
+      color: 0x4a2e1b, // Rich warm fertile agricultural brown
+      roughness: 0.88,
+      metalness: 0.04,
       flatShading: true,
     });
     const soilTop = new THREE.Mesh(soilTopGeo, soilTopMat);
     soilTop.rotation.x = -Math.PI / 2.22;
-    soilTop.position.set(0, 0.0, -0.2);
+    soilTop.position.set(0, 0.0, -0.15);
     soilTop.receiveShadow = true;
     scene.add(soilTop);
 
-    // Subterranean Soil Cross-Section (shows seed and roots below surface y < 0)
-    const soilBedGeo = new THREE.PlaneGeometry(9, 3.8, 14, 14);
+    // Subterranean Cross-Section (shows seed and roots below surface)
+    const soilBedGeo = new THREE.PlaneGeometry(9, 3.5, 12, 12);
     const soilBedMat = new THREE.MeshStandardMaterial({
-      color: 0x160e08, // Moist deep earth below surface
-      roughness: 0.98,
+      color: 0x2e1a0e, // Deep moist earth below surface
+      roughness: 0.95,
       metalness: 0.0,
     });
     const soilBed = new THREE.Mesh(soilBedGeo, soilBedMat);
-    soilBed.position.set(0, -1.1, -0.32);
+    soilBed.position.set(0, -1.05, -0.3);
     scene.add(soilBed);
 
-    // Realistic soil particles / crumbs clustered around the emergence point
+    // Soil crumbs / particles around the seed & emergence point
     const crumbGroup = new THREE.Group();
-    const crumbGeo = new THREE.DodecahedronGeometry(0.024, 0);
-    const crumbMat = new THREE.MeshStandardMaterial({ color: 0x3d2415, roughness: 0.92 });
+    const crumbGeo = new THREE.DodecahedronGeometry(0.026, 0);
+    const crumbMat = new THREE.MeshStandardMaterial({ color: 0x5c3822, roughness: 0.85 });
     const crumbMeshes: { mesh: THREE.Mesh; basePos: THREE.Vector3 }[] = [];
-    for (let i = 0; i < 32; i++) {
+    for (let i = 0; i < 36; i++) {
       const crumb = new THREE.Mesh(crumbGeo, crumbMat);
       const angle = Math.random() * Math.PI * 2;
-      const r = 0.05 + Math.random() * 0.48;
+      const r = 0.06 + Math.random() * 0.52;
       const x = Math.cos(angle) * r;
       const z = Math.sin(angle) * r * 0.65;
-      const y = 0.01 + Math.random() * 0.03;
+      const y = 0.015 + Math.random() * 0.035;
       crumb.position.set(x, y, z);
-      const s = 0.4 + Math.random() * 0.8;
+      const s = 0.45 + Math.random() * 0.85;
       crumb.scale.set(s, s * 0.75, s);
       crumb.castShadow = true;
       crumbGroup.add(crumb);
@@ -154,111 +152,118 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
     }
     scene.add(crumbGroup);
 
-    // ---------------- SCENE 2: THE SEED & GERMINATION ----------------
-    // Planted beneath the soil at y = -0.28
+    // ---------------- SCENE 2: PROMINENT SEED & GERMINATION ----------------
+    // Seed bean resting prominently at y = -0.22, clearly visible in cutaway
     const seedGroup = new THREE.Group();
-    seedGroup.position.set(0, -0.28, 0.02);
+    seedGroup.position.set(0, -0.22, 0.05);
 
-    // Two cotyledon halves of the seed that can crack open
-    const cotyledonGeo = new THREE.SphereGeometry(0.062, 16, 16);
-    cotyledonGeo.scale(0.65, 1.35, 0.85);
+    const cotyledonGeo = new THREE.SphereGeometry(0.08, 18, 18);
+    cotyledonGeo.scale(0.7, 1.4, 0.9);
     const seedMat = new THREE.MeshStandardMaterial({
-      color: 0x4a2c18, // Natural seed coat brown
-      roughness: 0.65,
-      metalness: 0.06,
+      color: 0x854d27, // Golden-brown seed coat, illuminated & clear
+      roughness: 0.55,
+      metalness: 0.08,
     });
 
     const seedLeft = new THREE.Mesh(cotyledonGeo, seedMat);
-    seedLeft.position.set(-0.02, 0, 0);
+    seedLeft.position.set(-0.025, 0, 0);
     seedLeft.castShadow = true;
     seedGroup.add(seedLeft);
 
     const seedRight = new THREE.Mesh(cotyledonGeo, seedMat);
-    seedRight.position.set(0.02, 0, 0);
+    seedRight.position.set(0.025, 0, 0);
     seedRight.castShadow = true;
     seedGroup.add(seedRight);
 
     scene.add(seedGroup);
 
-    // Roots growing downward into soil
+    // Downward root system (Ivory-white roots branching into soil)
     const rootMat = new THREE.MeshStandardMaterial({
-      color: 0xfaf5ea, // Tender ivory-white rootlet
-      roughness: 0.45,
-      transparent: true,
-      opacity: 0.92,
+      color: 0xfef9c3, // Translucent ivory-white rootlet
+      roughness: 0.4,
+      metalness: 0.02,
     });
-    const rootGroup = new THREE.Group();
-    scene.add(rootGroup);
 
-    // Main taproot & fine lateral branches
     const rootSplines = [
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0, -0.34, 0.02),
-        new THREE.Vector3(0.02, -0.52, 0.01),
-        new THREE.Vector3(-0.03, -0.75, 0.0),
+        new THREE.Vector3(0, -0.28, 0.04),
+        new THREE.Vector3(0.02, -0.48, 0.03),
+        new THREE.Vector3(-0.03, -0.72, 0.01),
         new THREE.Vector3(0.02, -1.02, -0.01),
       ]),
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.01, -0.46, 0.01),
-        new THREE.Vector3(-0.13, -0.65, -0.04),
-        new THREE.Vector3(-0.22, -0.85, -0.05),
+        new THREE.Vector3(-0.01, -0.42, 0.03),
+        new THREE.Vector3(-0.14, -0.62, -0.03),
+        new THREE.Vector3(-0.24, -0.84, -0.05),
       ]),
       new THREE.CatmullRomCurve3([
-        new THREE.Vector3(0.01, -0.50, 0.01),
-        new THREE.Vector3(0.15, -0.68, 0.03),
-        new THREE.Vector3(0.24, -0.92, 0.04),
-      ]),
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-0.02, -0.62, 0.0),
-        new THREE.Vector3(-0.08, -0.76, 0.02),
-        new THREE.Vector3(-0.14, -0.95, 0.01),
+        new THREE.Vector3(0.01, -0.46, 0.03),
+        new THREE.Vector3(0.16, -0.66, 0.04),
+        new THREE.Vector3(0.26, -0.90, 0.05),
       ]),
     ];
 
-    // ---------------- SCENE 3: SPROUT STEM & LEAF EMERGENCE ----------------
+    // Pre-create root tube meshes with setDrawRange for zero-allocation 60 FPS growth
+    const rootMeshes: { mesh: THREE.Mesh; geo: THREE.TubeGeometry; maxIndices: number }[] = [];
+    const rootGroup = new THREE.Group();
+    rootSplines.forEach((spline, idx) => {
+      const radius = idx === 0 ? 0.018 : 0.013;
+      const geo = new THREE.TubeGeometry(spline, 20, radius, 8, false);
+      geo.setDrawRange(0, 0); // Initially hidden
+      const mesh = new THREE.Mesh(geo, rootMat);
+      rootGroup.add(mesh);
+      rootMeshes.push({ mesh, geo, maxIndices: geo.index ? geo.index.count : 0 });
+    });
+    scene.add(rootGroup);
+
+    // ---------------- SCENE 3: SPROUT STEM & LEAVES EMERGENCE ----------------
     const stemSpline = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, -0.28, 0.02),
-      new THREE.Vector3(0.01, -0.04, 0.01),
-      new THREE.Vector3(0.035, 0.22, 0.0),
+      new THREE.Vector3(0, -0.22, 0.04),
+      new THREE.Vector3(0.01, -0.02, 0.02),
+      new THREE.Vector3(0.04, 0.22, 0.0),
       new THREE.Vector3(-0.025, 0.52, 0.015),
       new THREE.Vector3(0.01, 0.88, 0.0),
     ]);
 
+    const stemGeo = new THREE.TubeGeometry(stemSpline, 32, 0.032, 8, false);
+    stemGeo.setDrawRange(0, 0); // Initially hidden
     const stemMat = new THREE.MeshStandardMaterial({
-      color: 0x4ade80, // Fresh tender green
-      roughness: 0.35,
-      metalness: 0.04,
+      color: 0x4ade80, // Fresh vivid green
+      roughness: 0.32,
+      metalness: 0.05,
     });
-    let stemMesh: THREE.Mesh | null = null;
+    const stemMesh = new THREE.Mesh(stemGeo, stemMat);
+    stemMesh.castShadow = true;
+    scene.add(stemMesh);
+    const stemMaxIndices = stemGeo.index ? stemGeo.index.count : 0;
 
-    // Organic Leaf Shape
+    // Organic Leaf Geometry
     const leafShape = new THREE.Shape();
     leafShape.moveTo(0, 0);
-    leafShape.bezierCurveTo(0.15, 0.09, 0.23, 0.27, 0.0, 0.54); // Right contour
-    leafShape.bezierCurveTo(-0.23, 0.27, -0.15, 0.09, 0, 0);    // Left contour
+    leafShape.bezierCurveTo(0.16, 0.1, 0.25, 0.28, 0.0, 0.56); // Right contour
+    leafShape.bezierCurveTo(-0.25, 0.28, -0.16, 0.1, 0, 0);    // Left contour
 
     const leafGeo = new THREE.ExtrudeGeometry(leafShape, {
-      depth: 0.007,
+      depth: 0.008,
       bevelEnabled: true,
       bevelSegments: 2,
       steps: 1,
-      bevelSize: 0.003,
-      bevelThickness: 0.003,
+      bevelSize: 0.004,
+      bevelThickness: 0.004,
     });
-    // Add natural leaf curve/dish curvature
     const leafPos = leafGeo.attributes.position;
     for (let i = 0; i < leafPos.count; i++) {
       const y = leafPos.getY(i);
       const x = leafPos.getX(i);
-      const dip = Math.sin((y / 0.54) * Math.PI) * 0.048 - Math.abs(x) * 0.032;
+      const dip = Math.sin((y / 0.56) * Math.PI) * 0.05 - Math.abs(x) * 0.035;
       leafPos.setZ(i, leafPos.getZ(i) + dip);
     }
     leafGeo.computeVertexNormals();
 
     const leafMat = new THREE.MeshStandardMaterial({
-      color: 0x22c55e, // Radiant agricultural green
-      roughness: 0.26,
-      metalness: 0.04,
+      color: 0x22c55e, // Radiant agricultural emerald green
+      roughness: 0.25,
+      metalness: 0.05,
       side: THREE.DoubleSide,
     });
 
@@ -271,7 +276,7 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
     leftLeaf.rotation.set(0.25, 0.4, -0.6);
     leafGroup.add(leftLeaf);
 
-    // Right leaf (opens slightly after left leaf)
+    // Right leaf
     const rightLeaf = new THREE.Mesh(leafGeo, leafMat);
     rightLeaf.castShadow = true;
     rightLeaf.rotation.set(0.25, -0.4, 0.6);
@@ -279,31 +284,31 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
 
     scene.add(leafGroup);
 
-    // ---------------- ATMOSPHERIC FLOATING PARTICLES (GOLDEN MORNING DUST) ----------------
-    const particleCount = width < 768 ? 48 : 88;
+    // ---------------- FLOATING GOLDEN MORNING DUST PARTICLES ----------------
+    const particleCount = width < 768 ? 50 : 90;
     const particleGeo = new THREE.BufferGeometry();
     const particlePositions = new Float32Array(particleCount * 3);
     const particleSpeeds: number[] = [];
 
     for (let i = 0; i < particleCount; i++) {
-      particlePositions[i * 3] = (Math.random() - 0.5) * 3.0;
-      particlePositions[i * 3 + 1] = -0.3 + Math.random() * 2.0;
+      particlePositions[i * 3] = (Math.random() - 0.5) * 3.2;
+      particlePositions[i * 3 + 1] = -0.3 + Math.random() * 2.2;
       particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 2.0;
-      particleSpeeds.push(0.0014 + Math.random() * 0.0028);
+      particleSpeeds.push(0.0016 + Math.random() * 0.003);
     }
     particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
 
     const particleMat = new THREE.PointsMaterial({
-      color: 0xfef08a, // Soft morning sunlight dust
-      size: width < 768 ? 0.032 : 0.042,
+      color: 0xfef08a,
+      size: width < 768 ? 0.035 : 0.045,
       transparent: true,
-      opacity: 0.0,
+      opacity: 0.8,
       blending: THREE.AdditiveBlending,
     });
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // ---------------- ANIMATION TIMELINE (0.0s to 5.0s) ----------------
+    // ---------------- ANIMATION TIMELINE (4.8 SECONDS) ----------------
     let startTime: number | null = null;
     let animationFrameId: number;
 
@@ -311,132 +316,99 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
       if (!startTime) startTime = timestamp;
       const elapsed = (timestamp - startTime) / 1000; // in seconds
 
-      // SCENE 1: Soil Close-Up & Seed Moisture Swell (0.0s - 1.0s)
+      // SCENE 1: Soil & Seed Swell (0.0s - 1.0s)
       if (elapsed <= 1.2) {
-        const swell = Math.min(1.0, elapsed / 0.9);
-        seedGroup.scale.setScalar(1.0 + swell * 0.18);
-        sunLight.intensity = THREE.MathUtils.lerp(0.25, 0.75, swell);
+        const swell = Math.min(1.0, elapsed / 0.85);
+        seedGroup.scale.setScalar(1.0 + swell * 0.22);
       }
 
-      // SCENE 2: Seed Opens & Roots Sprout Downward (0.6s - 2.4s)
-      if (elapsed >= 0.6) {
-        // Cotyledons split open slightly as root & shoot emerge
-        const split = THREE.MathUtils.smoothstep(elapsed, 0.6, 1.8) * 0.035;
-        seedLeft.position.x = -0.02 - split;
-        seedLeft.rotation.z = split * 3.0;
-        seedRight.position.x = 0.02 + split;
-        seedRight.rotation.z = -split * 3.0;
+      // SCENE 2: Seed Opens & Roots Sprout Downward (0.3s - 2.2s)
+      if (elapsed >= 0.3) {
+        const split = THREE.MathUtils.smoothstep(elapsed, 0.3, 1.6) * 0.04;
+        seedLeft.position.x = -0.025 - split;
+        seedLeft.rotation.z = split * 2.5;
+        seedRight.position.x = 0.025 + split;
+        seedRight.rotation.z = -split * 2.5;
       }
 
-      if (elapsed >= 0.6 && elapsed <= 2.6) {
-        const rootProgress = THREE.MathUtils.smoothstep(elapsed, 0.6, 2.3);
-        rootGroup.clear();
-
-        rootSplines.forEach((spline) => {
-          const ptCount = Math.max(2, Math.floor(rootProgress * 16));
-          const subPts: THREE.Vector3[] = [];
-          for (let p = 0; p <= ptCount; p++) {
-            subPts.push(spline.getPoint((p / 16) * rootProgress));
-          }
-          if (subPts.length >= 2) {
-            const curve = new THREE.CatmullRomCurve3(subPts);
-            const tubeGeo = new THREE.TubeGeometry(curve, 16, 0.013, 6, false);
-            const rMesh = new THREE.Mesh(tubeGeo, rootMat);
-            rootGroup.add(rMesh);
-          }
+      if (elapsed >= 0.3 && elapsed <= 2.5) {
+        const rootProgress = THREE.MathUtils.smoothstep(elapsed, 0.3, 2.2);
+        rootMeshes.forEach(({ geo, maxIndices }) => {
+          // 48 indices per tubular segment
+          const count = Math.min(maxIndices, Math.floor(rootProgress * 20) * 48);
+          geo.setDrawRange(0, count);
         });
       }
 
-      // SCENE 3: Shoot Emerges, Soil Reacts, Stem Grows (1.2s - 3.4s)
-      if (elapsed >= 1.2 && elapsed <= 4.0) {
-        const stemProgress = THREE.MathUtils.smoothstep(elapsed, 1.2, 3.3);
-        if (stemMesh) {
-          scene.remove(stemMesh);
-          stemMesh.geometry.dispose();
-        }
+      // SCENE 3: Shoot Emerges from Soil & Grows Upward (0.8s - 3.2s)
+      if (elapsed >= 0.8 && elapsed <= 3.8) {
+        const stemProgress = THREE.MathUtils.smoothstep(elapsed, 0.8, 3.0);
+        const count = Math.min(stemMaxIndices, Math.floor(stemProgress * 32) * 48);
+        stemGeo.setDrawRange(0, count);
 
-        const stemCount = Math.max(3, Math.floor(stemProgress * 28));
-        const activePts: THREE.Vector3[] = [];
-        for (let i = 0; i <= stemCount; i++) {
-          activePts.push(stemSpline.getPoint((i / 28) * stemProgress));
-        }
+        // Position leaves directly at the growing shoot tip
+        const currentTip = stemSpline.getPoint(Math.max(0.01, stemProgress));
+        leafGroup.position.copy(currentTip);
 
-        if (activePts.length >= 2) {
-          const activeCurve = new THREE.CatmullRomCurve3(activePts);
-          const stemGeo = new THREE.TubeGeometry(activeCurve, 28, 0.028, 8, false);
-          stemMesh = new THREE.Mesh(stemGeo, stemMat);
-          stemMesh.castShadow = true;
-          scene.add(stemMesh);
-
-          // Position leaves at growing shoot tip
-          const tip = activePts[activePts.length - 1];
-          leafGroup.position.copy(tip);
-        }
-
-        // Soil reaction: Crumbs lift and displace slightly around y=0 as shoot breaches surface
-        if (elapsed >= 1.4 && elapsed <= 2.5) {
-          const breachProgress = THREE.MathUtils.smoothstep(elapsed, 1.4, 2.2);
+        // Soil reaction: Crumbs lift and displace as sprout breaks surface
+        if (elapsed >= 1.1 && elapsed <= 2.2) {
+          const breachProgress = THREE.MathUtils.smoothstep(elapsed, 1.1, 2.0);
           crumbMeshes.forEach(({ mesh, basePos }) => {
             const dist = Math.sqrt(basePos.x * basePos.x + basePos.z * basePos.z);
-            if (dist < 0.22) {
-              const push = (0.22 - dist) * 0.45 * breachProgress;
+            if (dist < 0.24) {
+              const push = (0.24 - dist) * 0.5 * breachProgress;
               mesh.position.y = basePos.y + push;
-              mesh.rotation.x = push * 4.0;
+              mesh.rotation.x = push * 3.5;
             }
           });
         }
       }
 
-      // SCENE 3 cont: Leaves Unfold One by One & Sway in Morning Breeze (2.4s - 4.6s)
-      if (elapsed >= 2.4) {
-        const overallLeafProgress = THREE.MathUtils.smoothstep(elapsed, 2.4, 3.6);
-        leafGroup.scale.setScalar(overallLeafProgress);
+      // SCENE 3 cont: Leaves Unfold One by One & Sway in Morning Breeze (2.0s - 4.6s)
+      if (elapsed >= 1.8) {
+        const overallLeaf = THREE.MathUtils.smoothstep(elapsed, 1.8, 3.4);
+        leafGroup.scale.setScalar(overallLeaf);
 
-        // Left leaf unfolds first (2.4s to 3.3s)
-        const leftProgress = THREE.MathUtils.smoothstep(elapsed, 2.4, 3.3);
-        leftLeaf.rotation.z = THREE.MathUtils.lerp(-1.15, -0.42, leftProgress);
-        leftLeaf.scale.setScalar(THREE.MathUtils.lerp(0.2, 1.0, leftProgress));
+        // Left leaf unfolds
+        const leftProg = THREE.MathUtils.smoothstep(elapsed, 1.8, 2.9);
+        leftLeaf.rotation.z = THREE.MathUtils.lerp(-1.1, -0.42, leftProg);
+        leftLeaf.scale.setScalar(THREE.MathUtils.lerp(0.3, 1.0, leftProg));
 
-        // Right leaf unfolds slightly after (2.7s to 3.6s)
-        const rightProgress = THREE.MathUtils.smoothstep(elapsed, 2.7, 3.6);
-        rightLeaf.rotation.z = THREE.MathUtils.lerp(1.15, 0.42, rightProgress);
-        rightLeaf.scale.setScalar(THREE.MathUtils.lerp(0.2, 1.0, rightProgress));
+        // Right leaf unfolds slightly after
+        const rightProg = THREE.MathUtils.smoothstep(elapsed, 2.2, 3.2);
+        rightLeaf.rotation.z = THREE.MathUtils.lerp(1.1, 0.42, rightProg);
+        rightLeaf.scale.setScalar(THREE.MathUtils.lerp(0.3, 1.0, rightProg));
 
-        // Gentle organic wind breeze once plant has emerged
-        if (elapsed > 3.2) {
-          const sway = Math.sin((elapsed - 3.2) * 3.2) * 0.038;
+        // Gentle organic wind breeze
+        if (elapsed > 3.0) {
+          const sway = Math.sin((elapsed - 3.0) * 3.0) * 0.04;
           leafGroup.rotation.z = sway;
-          leafGroup.rotation.x = Math.cos((elapsed - 3.2) * 2.8) * 0.02;
+          leafGroup.rotation.x = Math.cos((elapsed - 3.0) * 2.5) * 0.025;
         }
-
-        // Golden sunlight warms and illuminates the growing plant
-        sunLight.intensity = THREE.MathUtils.lerp(0.75, 2.3, overallLeafProgress);
-        leafBackGlow.intensity = THREE.MathUtils.lerp(0.1, 1.35, overallLeafProgress);
-        particleMat.opacity = THREE.MathUtils.lerp(0.0, 0.85, overallLeafProgress);
       }
 
-      // Floating golden morning dust movement
+      // Floating golden dust movement
       const pArr = particleGeo.attributes.position.array as Float32Array;
       for (let i = 0; i < particleCount; i++) {
         pArr[i * 3 + 1] += particleSpeeds[i];
         if (pArr[i * 3 + 1] > 2.2) {
-          pArr[i * 3 + 1] = -0.1;
+          pArr[i * 3 + 1] = -0.2;
         }
       }
       particleGeo.attributes.position.needsUpdate = true;
 
-      // Camera glides smoothly upward to focus on the growing plant
-      const camProgress = THREE.MathUtils.smoothstep(elapsed, 0.4, 3.5);
-      camera.position.y = THREE.MathUtils.lerp(0.08, 0.38, camProgress);
+      // Camera glides gracefully to frame the blooming plant
+      const camProgress = THREE.MathUtils.smoothstep(elapsed, 0.3, 3.2);
+      camera.position.y = THREE.MathUtils.lerp(0.12, 0.36, camProgress);
       camera.position.z = THREE.MathUtils.lerp(2.4, 2.5, camProgress);
-      camera.lookAt(0, THREE.MathUtils.lerp(-0.1, 0.32, camProgress), 0);
+      camera.lookAt(0, THREE.MathUtils.lerp(-0.08, 0.32, camProgress), 0);
 
-      // SCENE 4: Welcome Text Appearance (Triggered at 2.8s as plant unfurls)
-      if (elapsed >= 2.8 && !showWelcome) {
+      // SCENE 4: Welcome Text Appearance (Triggered at 2.4s as leaves unfurl)
+      if (elapsed >= 2.4 && !showWelcome) {
         setShowWelcome(true);
       }
 
-      // SCENE 5: Transition to Homepage (At ~4.8s, smoothly fade into homepage)
+      // SCENE 5: Transition to Homepage (At 4.8s, smoothly fade into homepage)
       if (elapsed >= 4.8 && !isFinishedRef.current) {
         handleFinish();
         return;
@@ -484,7 +456,7 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
 
   return (
     <div
-      className={`fixed inset-0 z-50 overflow-hidden bg-[#0a0705] select-none transition-opacity duration-700 ease-out ${
+      className={`fixed inset-0 z-50 overflow-hidden bg-gradient-to-b from-[#061a14] via-[#0d281e] to-[#1a0f08] select-none transition-opacity duration-700 ease-out ${
         fadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
       aria-label="Welcome to KhetGPT Intro"
@@ -492,14 +464,14 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
       {/* 3D WebGL Canvas Container */}
       <div ref={mountRef} className="absolute inset-0 w-full h-full" />
 
-      {/* Atmospheric Golden Morning Dawn Radial Glow in Upper Sky */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_65%_20%,rgba(251,191,36,0.22)_0%,transparent_65%)]" />
+      {/* Atmospheric Golden Dawn Sun Horizon Glow in Upper Center */}
+      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_35%,rgba(245,158,11,0.25)_0%,rgba(16,185,129,0.12)_45%,transparent_70%)]" />
 
       {/* Unobtrusive "Skip Intro" Button in Top Right */}
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
         <button
           onClick={handleFinish}
-          className="flex items-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-black/45 hover:bg-black/65 active:scale-95 backdrop-blur-md border border-white/15 text-white/80 hover:text-white transition-all text-xs sm:text-sm font-medium cursor-pointer shadow-lg"
+          className="flex items-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-black/50 hover:bg-black/75 active:scale-95 backdrop-blur-md border border-white/20 text-white/90 hover:text-white transition-all text-xs sm:text-sm font-medium cursor-pointer shadow-xl"
           title="Skip Intro"
         >
           <span>Skip Intro</span>
@@ -508,11 +480,11 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
 
       {/* SCENE 4: Welcome Text (Positioned ABOVE the growing plant with smooth fade-in and upward glide) */}
       <div
-        className={`absolute top-14 sm:top-18 md:top-22 left-0 right-0 px-4 text-center pointer-events-none transition-all duration-1000 ease-out transform ${
+        className={`absolute top-12 sm:top-16 md:top-20 left-0 right-0 px-4 text-center pointer-events-none transition-all duration-1000 ease-out transform ${
           showWelcome ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
-        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/25 backdrop-blur-md mb-2 sm:mb-3 shadow-lg shadow-emerald-950/40">
+        <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 backdrop-blur-md mb-2 sm:mb-3 shadow-lg shadow-emerald-950/50">
           <Sprout className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 animate-pulse" />
           <span className="text-[10px] sm:text-xs uppercase tracking-widest text-emerald-300 font-bold">
             Smart Agriculture AI
@@ -520,11 +492,11 @@ export const PlantGrowingIntro: React.FC<PlantGrowingIntroProps> = ({ onComplete
         </div>
 
         {/* EXACT REQUIRED TEXT: Welcome to KhetGPT */}
-        <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-100 via-green-50 to-amber-100 tracking-tight drop-shadow-[0_4px_18px_rgba(0,0,0,0.85)] font-sans">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-100 via-green-50 to-amber-100 tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)] font-sans">
           Welcome to KhetGPT
         </h1>
 
-        <p className="text-xs sm:text-base font-medium text-emerald-200/90 mt-1.5 sm:mt-2 max-w-md mx-auto tracking-wide drop-shadow">
+        <p className="text-xs sm:text-base font-medium text-emerald-200/90 mt-1 sm:mt-2 max-w-md mx-auto tracking-wide drop-shadow">
           Growing Smarter Farming with AI
         </p>
       </div>
