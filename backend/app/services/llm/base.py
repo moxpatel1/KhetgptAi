@@ -36,3 +36,4 @@ class BaseLLMProvider(ABC):
     def model_name(self) -> str:
         """Returns the specific model identifier (e.g. 'gemini-1.5-flash', 'qwen/qwen3.8-27b')."""
         pass
+

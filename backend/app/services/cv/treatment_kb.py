@@ -10,8 +10,12 @@ from typing import Dict, Any, Optional
 CROP_TRANSLATIONS: Dict[str, Dict[str, str]] = {
     "Tomato": {"en": "Tomato", "hi": "टमाटर", "gu": "ટામેટા"},
     "Potato": {"en": "Potato", "hi": "आलू", "gu": "બટાટા"},
+    "Corn": {"en": "Corn (Maize)", "hi": "मक्का", "gu": "મકાઈ"},
     "Corn (maize)": {"en": "Corn (Maize)", "hi": "मक्का", "gu": "મકાઈ"},
+    "Bell Pepper": {"en": "Bell Pepper / Chilli", "hi": "शिमला मिर्च / मिर्च", "gu": "શિમલા મરચાં / મરચી"},
     "Pepper, bell": {"en": "Bell Pepper / Chilli", "hi": "शिमला मिर्च / मिर्च", "gu": "શિમલા મરચાં / મરચી"},
+    "Rice": {"en": "Rice (Paddy)", "hi": "धान / चावल", "gu": "ડાંગર / ચોખા"},
+    "Cassava": {"en": "Cassava", "hi": "कसावा", "gu": "કસાવા"},
     "Grape": {"en": "Grape", "hi": "अंगूर", "gu": "દ્રાક્ષ"},
     "Apple": {"en": "Apple", "hi": "सेब", "gu": "સફરજન"},
     "Orange": {"en": "Orange (Citrus)", "hi": "संतरा (नींबू वर्गीय)", "gu": "સંતરા (સાઇટ્રસ)"},
@@ -1150,10 +1154,11 @@ def get_disease_treatment(
         prec = DEFAULT_HEALTHY_ADVISORY["precautions"].get(lang, DEFAULT_HEALTHY_ADVISORY["precautions"]["en"])
         prev = DEFAULT_HEALTHY_ADVISORY["preventive_measures"].get(lang, DEFAULT_HEALTHY_ADVISORY["preventive_measures"]["en"])
     else:
-        # Fallback for remaining diseases: clean the disease raw string
-        parts = raw_class_name.split("___")
-        disease_raw = parts[1].replace("_", " ") if len(parts) > 1 else raw_class_name
-        disease_name = disease_raw
+        # Fallback for remaining diseases: clean the disease raw string nicely
+        cleaned = raw_class_name.replace("___", " ").replace("_", " ").strip()
+        if cleaned.lower().startswith(detected_crop.lower()):
+            cleaned = cleaned[len(detected_crop):].strip()
+        disease_name = cleaned.title() if cleaned else "Identified Condition"
         symptoms = DEFAULT_DISEASE_ADVISORY["symptoms"].get(lang, DEFAULT_DISEASE_ADVISORY["symptoms"]["en"])
         bio = DEFAULT_DISEASE_ADVISORY["biological_control"].get(lang, DEFAULT_DISEASE_ADVISORY["biological_control"]["en"])
         chem = DEFAULT_DISEASE_ADVISORY["chemical_control"].get(lang, DEFAULT_DISEASE_ADVISORY["chemical_control"]["en"])

@@ -72,3 +72,4 @@ class LLMManager:
             "groq_model": self.groq.model_name,
             "active_primary": "gemini" if self.gemini.is_available() else ("groq" if self.groq.is_available() else "none")
         }
+

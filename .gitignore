@@ -44,6 +44,7 @@ data/splits/*
 *.weights
 !backend/app/services/cv/artifacts/*.json
 !backend/app/services/cv/artifacts/*.csv
+!backend/app/services/cv/artifacts/plant_disease_model_quant.onnx
 
 # Large archives and binaries (>50MB exceeds standard GitHub limits)
 *.zip

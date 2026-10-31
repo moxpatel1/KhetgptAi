@@ -42,3 +42,4 @@ def sanitize_and_format_markdown(text: str, language: str = "en") -> str:
     formatted = re.sub(r'\n{3,}', '\n\n', formatted)
 
     return formatted.strip()
+
