@@ -1,15 +1,11 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
 import { CropScan } from './pages/CropScan';
 import { KhetGPTChat } from './pages/KhetGPTChat';
 import { type Language, translations } from './i18n/translations';
-import { Sprout, PhoneCall, ShieldCheck, Sparkles } from 'lucide-react';
-
-// Lazy-load Three.js 3D animation to keep initial bundle ultra-fast
-const IntroAnimation = lazy(() =>
-  import('./components/IntroAnimation').then((m) => ({ default: m.IntroAnimation }))
-);
+import { Sprout, PhoneCall, ShieldCheck } from 'lucide-react';
+import { PlantGrowingIntro } from './components/PlantGrowingIntro';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<'home' | 'scan' | 'chat'>('home');
@@ -18,11 +14,11 @@ export const App: React.FC = () => {
     return (saved === 'gu' || saved === 'hi' || saved === 'en') ? saved : 'gu';
   });
 
-  // 3D Intro Animation state - plays on first visit per browser session
+  // Automatic 3D Seed-to-Plant Intro on initial website visit per session
   const [showIntro, setShowIntro] = useState<boolean>(() => {
     try {
-      const hasPlayed = sessionStorage.getItem('khetgpt_intro_played');
-      return hasPlayed !== 'true';
+      const hasSeen = sessionStorage.getItem('khetgpt_intro_seen');
+      return hasSeen !== 'true';
     } catch {
       return false;
     }
@@ -34,29 +30,23 @@ export const App: React.FC = () => {
 
   const handleIntroComplete = () => {
     try {
-      sessionStorage.setItem('khetgpt_intro_played', 'true');
+      sessionStorage.setItem('khetgpt_intro_seen', 'true');
     } catch {
       // Ignore storage error
     }
     setShowIntro(false);
   };
 
-  const handleReplayIntro = () => {
-    setShowIntro(true);
-  };
-
   const t = translations[language];
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-green-100 selection:text-green-900">
-      {/* Cinematic 3D Agriculture Seed-to-Plant Intro Animation (Lazy Loaded) */}
+      {/* Automatic Fullscreen 3D Agriculture Seed-to-Plant Intro Animation */}
       {showIntro && (
-        <Suspense fallback={null}>
-          <IntroAnimation
-            onComplete={handleIntroComplete}
-            language={language}
-          />
-        </Suspense>
+        <PlantGrowingIntro
+          onComplete={handleIntroComplete}
+          language={language}
+        />
       )}
 
       {/* Sticky Top Navigation */}
@@ -73,7 +63,6 @@ export const App: React.FC = () => {
           <Home
             onNavigate={(tab) => setCurrentTab(tab)}
             language={language}
-            onReplayIntro={handleReplayIntro}
           />
         )}
         {currentTab === 'scan' && (
@@ -105,15 +94,6 @@ export const App: React.FC = () => {
               <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-600" />
               ICAR & Ministry Grounded
             </span>
-            <span>•</span>
-            <button
-              onClick={handleReplayIntro}
-              className="inline-flex items-center space-x-1 text-emerald-700 hover:text-emerald-900 font-medium transition-colors hover:underline cursor-pointer"
-              title={t.replayIntro}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>{t.replayIntro}</span>
-            </button>
           </div>
 
           <div className="text-gray-400">
