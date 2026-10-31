@@ -3,6 +3,7 @@ export type Language = 'gu' | 'hi' | 'en';
 export interface TranslationStrings {
   appName: string;
   tagline: string;
+  replayIntro: string;
   navHome: string;
   navScan: string;
   navChat: string;
@@ -73,6 +74,7 @@ export const translations: Record<Language, TranslationStrings> = {
   gu: {
     appName: "ખેતGPT",
     tagline: "ભારતીય ખેડૂત માટે આધુનિક AI કૃષિ સહાયક",
+    replayIntro: "3D એનિમેશન જુઓ",
     navHome: "હોમ (મુખ્ય પેજ)",
     navScan: "પાક રોગ નિદાન",
     navChat: "ખેતGPT AI ચેટ",
@@ -137,6 +139,7 @@ export const translations: Record<Language, TranslationStrings> = {
   hi: {
     appName: "खेतGPT",
     tagline: "भारतीय किसानों के लिए आधुनिक AI कृषि सलाहकार",
+    replayIntro: "3D एनिमेशन देखें",
     navHome: "होम",
     navScan: "फसल रोग पहचान",
     navChat: "खेतGPT AI चैट",
@@ -201,6 +204,7 @@ export const translations: Record<Language, TranslationStrings> = {
   en: {
     appName: "KhetGPT",
     tagline: "AI-Powered Agriculture Assistance for Indian Farmers",
+    replayIntro: "Replay 3D Intro",
     navHome: "Home",
     navScan: "Crop Disease Scan",
     navChat: "KhetGPT AI Chat",

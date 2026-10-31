@@ -5,9 +5,10 @@ import { type Language, translations } from '../i18n/translations';
 interface HomeProps {
   onNavigate: (tab: 'scan' | 'chat') => void;
   language: Language;
+  onReplayIntro?: () => void;
 }
 
-export const Home: React.FC<HomeProps> = ({ onNavigate, language }) => {
+export const Home: React.FC<HomeProps> = ({ onNavigate, language, onReplayIntro }) => {
   const t = translations[language];
 
   return (
@@ -46,6 +47,16 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, language }) => {
               <MessageSquare className="w-5 h-5" />
               <span>{t.homeChatCardBtn}</span>
             </button>
+            {onReplayIntro && (
+              <button
+                onClick={onReplayIntro}
+                className="flex items-center space-x-2 bg-black/20 hover:bg-black/35 border border-white/20 text-emerald-100 hover:text-white font-semibold px-4 py-3.5 rounded-xl transition-all transform active:scale-95 text-sm sm:text-base backdrop-blur-md"
+                title={t.replayIntro}
+              >
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span className="hidden sm:inline">{t.replayIntro}</span>
+              </button>
+            )}
           </div>
         </div>
       </section>
