@@ -18,7 +18,10 @@ def test_health_endpoint():
 def test_api_root():
     response = client.get("/")
     assert response.status_code == 200
-    assert "KhetGPT" in response.json()["message"]
+    if "text/html" in response.headers.get("content-type", ""):
+        assert "KhetGPT" in response.text
+    else:
+        assert "KhetGPT" in response.json()["message"]
 
 def test_disease_classes():
     response = client.get("/api/disease/classes")

@@ -14,26 +14,14 @@ export const App: React.FC = () => {
     return (saved === 'gu' || saved === 'hi' || saved === 'en') ? saved : 'gu';
   });
 
-  // Automatic 3D Seed-to-Plant Intro on initial website visit per session
-  const [showIntro, setShowIntro] = useState<boolean>(() => {
-    try {
-      const hasSeen = sessionStorage.getItem('khetgpt_intro_seen');
-      return hasSeen !== 'true';
-    } catch {
-      return false;
-    }
-  });
+  // Automatic 3D plant-growth intro plays whenever the website is opened or refreshed
+  const [showIntro, setShowIntro] = useState<boolean>(true);
 
   useEffect(() => {
     localStorage.setItem('khetgpt_lang', language);
   }, [language]);
 
   const handleIntroComplete = () => {
-    try {
-      sessionStorage.setItem('khetgpt_intro_seen', 'true');
-    } catch {
-      // Ignore storage error
-    }
     setShowIntro(false);
   };
 
